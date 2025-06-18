@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <title>Movie booking</title>
+</head>
+    <meta charset="UTF-8">
+    <title>Order Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background-color: #d67608;
+        }
+        .order-box {
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgb(0, 0, 0);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(235, 233, 233, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #f8f3f3;
+        }
+        .details {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .details p {
+            margin: 10px 0;
+        }
+        .back-btn {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            width: 100px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="order-box">
+        <h2>Order Confirmation</h2>
+        <div class="details" id="orderDetails">
+            <!-- Info tiket akan tampil di sini -->
+        </div>
+        <a href="index.html" class="back-btn">Back</a>
+    </div>
+
+    <script>
+        // Ambil data order dari localStorage
+        const order = JSON.parse(localStorage.getItem("ticketOrder"));
+        if (order) {
+            document.getElementById("orderDetails").innerHTML = `
+                <p><strong>Movie:</strong> ${order.movie}</p>
+                <p><strong>Screen:</strong> ${order.screen}</p>
+                <p><strong>Price:</strong> $${order.price}</p>
+            `;
+        } else {
+            document.getElementById("orderDetails").innerHTML = "<p>No order found.</p>";
+        }
+    </script>
+</body>
+</html>

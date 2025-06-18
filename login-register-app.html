@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Login Movie Booking</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+<style>
+  /* CSS reset and base */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  html {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    background: linear-gradient(135deg, #000000, #ff9100);
+    min-height: 100%;
+    color: #f0f4ff;
+  }
+  body, #app {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overscroll-behavior: none;
+  }
+  /* Scrollbar customization */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255 255 255 / 0.3);
+    border-radius: 8px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255 255 255 / 0.5);
+  }
+
+  /* Header */
+  header {
+    position: sticky;
+    top: 0;
+    height: 64px;
+    backdrop-filter: blur(16px);
+    background: rgba(31, 41, 55, 0.6);
+    border-bottom: 1px solid rgba(255 255 255 / 0.12);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    z-index: 100;
+  }
+  header .logo {
+    font-weight: 700;
+    font-size: clamp(1.25rem, 1.5vw, 1.5rem);
+    letter-spacing: 0.05em;
+    color: #dbeafe;
+    user-select: none;
+  }
+  /* Main container */
+  main {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 24px;
+    min-height: calc(100vh - 64px - 48px);
+  }
+
+  /* Card container for login/register */
+  .auth-card {
+    background: rgba(255 255 255 / 0.08);
+    border-radius: 16px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    width: 100%;
+    max-width: 480px;
+    padding: 32px 32px 48px 32px;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.3s ease;
+  }
+  .auth-card:hover,
+  .auth-card:focus-within {
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Tab switch for login/register */
+  .tab-switch {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 32px;
+  }
+  .tab-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1.125rem;
+    color: rgba(255 255 255 / 0.7);
+    padding: 12px 24px;
+    border-radius: 12px 12px 0 0;
+    transition: color 0.3s ease, background-color 0.3s ease;
+    user-select: none;
+  }
+  .tab-button:not(:last-child) {
+    margin-right: 12px;
+  }
+  .tab-button[aria-selected="true"] {
+    background: linear-gradient(135deg, #ff7b00, #ff7b00);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.6);
+  }
+  .tab-button:focus-visible {
+    outline: 2px solid #a5b4fc;
+    outline-offset: 2px;
+  }
+
+  /* Forms */
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    color: #cbd5e1;
+  }
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    background: rgba(255 255 255 / 0.15);
+    border: none;
+    border-radius: 8px;
+    padding: 14px 16px;
+    color: white;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  input[type="password"]:focus {
+    outline: none;
+    background: rgba(255 255 255 / 0.3);
+    box-shadow: 0 0 6px 2px rgba(99, 102, 241, 0.7);
+  }
+  input::placeholder {
+    color: rgba(255 255 255 / 0.7);
+  }
+
+  /* Error message */
+  .error-message {
+    color: #f87171;
+    font-size: 0.8rem;
+    margin-top: 4px;
+    margin-bottom: 12px;
+    min-height: 18px;
+  }
+
+  /* Submit button */
+  button[type="submit"] {
+    margin-top: 24px;
+    background: linear-gradient(135deg, #6366f1, #22d3ee);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.125rem;
+    padding: 14px 0;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(34, 211, 238, 0.5);
+    transition: background-color 0.3s ease, transform 0.15s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+  button[type="submit"]:hover {
+    background: linear-gradient(135deg, #4f46e5, #0ea5e9);
+    transform: translateY(-2px);
+  }
+  button[type="submit"]:active {
+    transform: translateY(0);
+  }
+  button[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  /* Material icon with button */
+  .material-icons {
+    font-size: 24px;
+  }
+
+  /* Link below form for toggling */
+  .auth-toggle {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: rgba(255 255 255 / 0.6);
+    text-align: center;
+  }
+  .auth-toggle button {
+    background: none;
+    border: none;
+    color: #a5b4fc;
+    cursor: pointer;
+    font-weight: 600;
+    padding: 0;
+    margin-left: 4px;
+    transition: color 0.3s ease;
+  }
+  .auth-toggle button:hover,
+  .auth-toggle button:focus {
+    color: #dbeafe;
+    outline: none;
+  }
+
+  /* Notification toast container */
+  #toast {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    background: rgba(51 102 255 / 0.9);
+    color: white;
+    padding: 16px 24px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(51, 102, 255, 0.6);
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    pointer-events: auto;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    z-index: 9999;
+  }
+  #toast.show {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    main {
+      padding: 24px 16px;
+      min-height: calc(100vh - 64px - 48px);
+    }
+    .auth-card {
+      padding: 24px 24px 40px 24px;
+      max-width: 100%;
+      border-radius: 14px;
+    }
+    .tab-switch {
+      margin-bottom: 24px;
+    }
+  }
+</style>
+</head>
+<body>
+<header role="banner">
+  <div class="logo" tabindex="0" aria-label="Brand logo">Movie Booking</div>
+</header>
+
+<main>
+  <section class="auth-card" aria-labelledby="auth-heading" role="region">
+    <h1 id="auth-heading" class="visually-hidden">Authentication</h1>
+    <nav aria-label="Login and Registration Tabs" class="tab-switch">
+      <button type="button" class="tab-button" role="tab" aria-selected="true" aria-controls="login-panel" id="login-tab" tabindex="0">Login</button>
+      <button type="button" class="tab-button" role="tab" aria-selected="false" aria-controls="register-panel" id="register-tab" tabindex="-1">Register</button>
+    </nav>
+
+    <form id="login-form" role="tabpanel" aria-labelledby="login-tab" tabindex="0">
+      <label for="login-email">Email address</label>
+      <input type="email" id="login-email" name="email" autocomplete="email" placeholder="email@example.com" required aria-describedby="login-email-error" />
+      <div id="login-email-error" class="error-message" aria-live="polite"></div>
+
+      <label for="login-password">Password</label>
+      <input type="password" id="login-password" name="password" autocomplete="current-password" placeholder="Enter your password" required minlength="8" aria-describedby="login-password-error" />
+      <div id="login-password-error" class="error-message" aria-live="polite"></div>
+
+      <button type="submit" aria-label="Log in to your account">
+        <span class="material-icons" aria-hidden="true">login</span> Login
+      </button>
+
+      <p class="auth-toggle">
+        Don't have an account?
+        <button type="button" id="show-register">Register</button>
+      </p>
+    </form>
+
+    <form id="register-form" role="tabpanel" aria-labelledby="register-tab" tabindex="-1" hidden>
+      <label for="register-name">Full Name</label>
+      <input type="text" id="register-name" name="fullname" autocomplete="name" placeholder="John Doe" required aria-describedby="register-name-error" />
+      <div id="register-name-error" class="error-message" aria-live="polite"></div>
+
+      <label for="register-email">Email address</label>
+      <input type="email" id="register-email" name="email" autocomplete="email" placeholder="email@example.com" required aria-describedby="register-email-error" />
+      <div id="register-email-error" class="error-message" aria-live="polite"></div>
+
+      <label for="register-password">Password</label>
+      <input type="password" id="register-password" name="password" autocomplete="new-password" placeholder="Create a password" required minlength="8" aria-describedby="register-password-error" />
+      <div id="register-password-error" class="error-message" aria-live="polite"></div>
+
+      <label for="register-password-confirm">Confirm Password</label>
+      <input type="password" id="register-password-confirm" name="password-confirm" autocomplete="new-password" placeholder="Confirm your password" required minlength="8" aria-describedby="register-password-confirm-error" />
+      <div id="register-password-confirm-error" class="error-message" aria-live="polite"></div>
+
+      <button type="submit" aria-label="Create a new account">
+        <span class="material-icons" aria-hidden="true">app_registration</span> Register
+      </button>
+
+      <p class="auth-toggle">
+        Already have an account?
+        <button type="button" id="show-login">Login</button>
+      </p>
+    </form>
+  </section>
+</main>
+
+<footer style="text-align:center; padding: 12px 24px; font-size: 0.85rem; color: rgba(255 255 255 / 0.65);">
+  &copy; 2024 PremiumApp. All rights reserved.
+</footer>
+
+<div id="toast" role="alert" aria-live="assertive" aria-atomic="true">
+  <span class="material-icons" aria-hidden="true" id="toast-icon">info</span>
+  <span id="toast-message">Sample message</span>
+</div>
+
+<script>
+  (() => {
+    const loginTab = document.getElementById('login-tab');
+    const registerTab = document.getElementById('register-tab');
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    const showRegisterBtn = document.getElementById('show-register');
+    const showLoginBtn = document.getElementById('show-login');
+    const toast = document.getElementById('toast');
+    const toastMessage = document.getElementById('toast-message');
+    const toastIcon = document.getElementById('toast-icon');
+
+    // Utility: show toast notifications
+    function showToast(message, type = 'info', duration = 4000) {
+      toastMessage.textContent = message;
+      let iconName = 'info';
+      if (type === 'error') iconName = 'error';
+      if (type === 'success') iconName = 'check_circle';
+      toastIcon.textContent = iconName;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, duration);
+    }
+
+    // Tab switching function
+    function switchTab(tab) {
+      if (tab === 'login') {
+        loginTab.setAttribute('aria-selected', 'true');
+        loginTab.tabIndex = 0;
+        registerTab.setAttribute('aria-selected', 'false');
+        registerTab.tabIndex = -1;
+
+        loginForm.hidden = false;
+        loginForm.tabIndex = 0;
+        loginForm.focus();
+        registerForm.hidden = true;
+        registerForm.tabIndex = -1;
+      } else {
+        registerTab.setAttribute('aria-selected', 'true');
+        registerTab.tabIndex = 0;
+        loginTab.setAttribute('aria-selected', 'false');
+        loginTab.tabIndex = -1;
+
+        registerForm.hidden = false;
+        registerForm.tabIndex = 0;
+        registerForm.focus();
+        loginForm.hidden = true;
+        loginForm.tabIndex = -1;
+      }
+      clearFormErrors();
+    }
+
+    // Clear all error messages
+    function clearFormErrors() {
+      const errors = document.querySelectorAll('.error-message');
+      errors.forEach(el => (el.textContent = ''));
+    }
+
+    // Validate email format
+    function isValidEmail(email) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email.toLowerCase());
+    }
+
+    // User storage simulation
+    const USER_STORAGE_KEY = 'premiumapp_users';
+
+    function getUsers() {
+      try {
+        return JSON.parse(localStorage.getItem(USER_STORAGE_KEY)) || [];
+      } catch {
+        return [];
+      }
+    }
+    function saveUsers(users) {
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(users));
+    }
+
+    function findUserByEmail(email) {
+      return getUsers().find(u => u.email.toLowerCase() === email.toLowerCase());
+    }
+
+    // Login form validation and submission
+    loginForm.addEventListener('submit', e => {
+      e.preventDefault();
+      clearFormErrors();
+
+      const emailInput = loginForm.email;
+      const passwordInput = loginForm.password;
+      let valid = true;
+
+      if (!emailInput.value.trim()) {
+        loginEmailError.textContent = 'Email is required.';
+        valid = false;
+      } else if (!isValidEmail(emailInput.value)) {
+        loginEmailError.textContent = 'Please enter a valid email.';
+        valid = false;
+      }
+      if (!passwordInput.value.trim()) {
+        loginPasswordError.textContent = 'Password is required.';
+        valid = false;
+      } else if (passwordInput.value.length < 8) {
+        loginPasswordError.textContent = 'Password must be at least 8 characters.';
+        valid = false;
+      }
+      if(!valid) {
+        return;
+      }
+      const user = findUserByEmail(emailInput.value);
+      if (!user) {
+        showToast('No account found with this email.', 'error');
+        return;
+      }
+      if (user.password !== passwordInput.value) {
+        showToast('Incorrect password. Please try again.', 'error');
+        return;
+      }
+      
+      showToast('Welcome back' ,`${user.fullname}!`, 'success');
+      
+      // Redirect to index.html after a short delay to allow the toast to be seen
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 2000); // 2 seconds delay
+
+      // Simulate login success (could implement actual session logic here)
+      loginForm.reset();
+    });
+
+    // Register form validation and submission
+    registerForm.addEventListener('submit', e => {
+      e.preventDefault();
+      clearFormErrors();
+
+      const nameInput = registerForm.fullname;
+      const emailInput = registerForm.email;
+      const passwordInput = registerForm.password;
+      const passwordConfirmInput = registerForm['password-confirm'];
+
+      let valid = true;
+
+      if (!nameInput.value.trim()) {
+        registerNameError.textContent = 'Full name is required.';
+        valid = false;
+      }
+      if (!emailInput.value.trim()) {
+        registerEmailError.textContent = 'Email is required.';
+        valid = false;
+      } else if (!isValidEmail(emailInput.value)) {
+        registerEmailError.textContent = 'Please enter a valid email.';
+        valid = false;
+      } else if(findUserByEmail(emailInput.value)) {
+        registerEmailError.textContent = 'An account with this email already exists.';
+        valid = false;
+      }
+      if (!passwordInput.value.trim()) {
+        registerPasswordError.textContent = 'Password is required.';
+        valid = false;
+      } else if (passwordInput.value.length < 8) {
+        registerPasswordError.textContent = 'Password must be at least 8 characters.';
+        valid = false;
+      }
+      if (!passwordConfirmInput.value.trim()) {
+        registerPasswordConfirmError.textContent = 'Please confirm your password.';
+        valid = false;
+      } else if (passwordInput.value !== passwordConfirmInput.value) {
+        registerPasswordConfirmError.textContent = 'Passwords do not match.';
+        valid = false;
+      }
+      if(!valid) {
+        return;
+      }
+
+      const newUser  = {
+        id: crypto.randomUUID(),
+        email: emailInput.value.trim().toLowerCase(),
+        fullname: nameInput.value.trim(),
+        password: passwordInput.value,
+        createdAt: new Date().toISOString()
+      };
+      // Save user
+      const users = getUsers();
+      users.push(newUser );
+      saveUsers(users);
+      showToast('Registration successful! You can now login.', 'success');
+      registerForm.reset();
+      switchTab('login');
+    });
+
+    // Toggle buttons
+    showRegisterBtn.addEventListener('click', () => switchTab('register'));
+    showLoginBtn.addEventListener('click', () => switchTab('login'));
+    loginTab.addEventListener('click', () => switchTab('login'));
+    registerTab.addEventListener('click', () => switchTab('register'));
+
+    // Focus trapping is beyond scope but basic keyboard navigation ensured
+
+  })();
+</script>
+
+
+<!-- Accessibility helper -->
+<style>
+  .visually-hidden {
+    position: absolute !important;
+    height: 1px; width: 1px;
+    overflow: hidden;
+    clip: rect(1px, 1px, 1px, 1px);
+    white-space: nowrap;
+  }
+</style>
+</body>
+</html>
